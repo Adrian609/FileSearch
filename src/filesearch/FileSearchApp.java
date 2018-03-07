@@ -6,22 +6,16 @@
 package filesearch;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  *
- * @author Arod6
- * Description: 
- *      Read files in a directory
- *      Search each file fro text matching a regular expression
- *      Add matching all files to a ZIP file
- * Variables
- *      String path
- *      String regex
- *      String zipFIleName
- * Methods
- *      walkDirectory
- *      searchFile(File file)
- *      addFileToZip (File file)
+ * @author Arod6 Description: Read files in a directory Search each file fro
+ * text matching a regular expression Add matching all files to a ZIP file
+ * Variables String path String regex String zipFIleName Methods walkDirectory
+ * searchFile(File file) addFileToZip (File file)
  */
 public class FileSearchApp {
 
@@ -52,25 +46,27 @@ public class FileSearchApp {
     public void setZipFileName(String zipFileName) {
         this.zipFileName = zipFileName;
     }
-    
+
     public static void main(String[] args) {
         FileSearchApp app = new FileSearchApp();
-        
-        switch(Math.min(args.length, 3)){
+
+        switch (Math.min(args.length, 3)) {
             case 0:
                 System.out.println("USAGE: FileSearchApp path [regex] [zipfile]");
-            case 3: app.setZipFileName(args[2]);
-            case 2: app.setRegex(args[1]);
-            case 1: app.setPath(args[0]);
-            
+            case 3:
+                app.setZipFileName(args[2]);
+            case 2:
+                app.setRegex(args[1]);
+            case 1:
+                app.setPath(args[0]);
+
         }
         try {
             app.walkDirectory(app.getPath());
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
-        
+
     }
 
     public void walkDirectory(String path) {
@@ -84,8 +80,25 @@ public class FileSearchApp {
     }
 
     public void addFileToZip(File file) {
-        System.out.println("addFileToZip: "+ file);
+        System.out.println("addFileToZip: " + file);
     }
+
+    public void processFile(File file) {
+        System.out.println("processFile: " + file);
+    }
+
+    /**
+     * How it was done in Java 7 * public void walkDIrectoryJava7(String
+     * path)throws IOException{ * Files.walkFileTree(path.get(path), new
+     * SimpleFileVisitor<Path>(){ * public FileVistResult visitFile(Path file,
+     * BasicFileAttributes attrs) * throws IOException{ *
+     * processFile(file.toFile()); * return FileVisitResult.CONTINUE; * } * });
+     * }
+     **/
     
-    
+    // Walk Directory in Java 8
+    public void walkDrectory(String path) throws IOException {
+        Files.walk(Paths.get(path)).forEach(f -> processFile(f.toFile()));
+    }
+
 }
